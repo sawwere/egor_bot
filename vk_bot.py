@@ -42,7 +42,7 @@ for event in longpoll.listen():
         try:
             egor_reg = re.compile(re.escape('hippo'), re.IGNORECASE)
             egor_mes = re.sub(
-                r"Egor|Егор|Ег0р|ЕГОР|EГОР|НЕГОР|Егоp|Ег0р|Eгор", "*егор", text)
+                r"Egor|Егор|Ег0р|ЕГОР|EГОР|НЕГОР|Егоp|Ег0р|Eгор|ЕгоР|Eгop", "*егор", text)
             #print(egor_mes)
         except:
             print('Error unicode')
