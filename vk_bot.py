@@ -1,11 +1,11 @@
-
+from requests import *
 import random, vk_api, vk
+import re
+from time import sleep
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.longpoll import VkLongPoll, VkEventType
-
-import re
 
 def load_info(path):
     with open(path) as file:
@@ -18,10 +18,22 @@ def load_info(path):
 token, group_id, key = load_info("config.txt")
 
 
+class MyVkBotLongPoll(VkBotLongPoll):
+    def listen(self):
+        while True:
+            try:
+                for event in self.check():
+                    yield event
+            except Exception as e:
+                print('error', e)
+                sleep(10)
+
+
+
 vk_session = vk_api.VkApi(
     token=token)
 
-longpoll = vk_api.bot_longpoll.VkBotLongPoll(vk_session, group_id)
+longpoll = MyVkBotLongPoll(vk_session, group_id)
 vk = vk_session.get_api()
 
 
@@ -35,6 +47,10 @@ def send_message(text):
         chat_id=event.chat_id)
 
 
+def thanks_oleg(text):
+    return text == '\спс'
+
+print("Start listening")
 for event in longpoll.listen():
     if event.type == VkBotEventType.MESSAGE_NEW:
         text = event.object['text']
@@ -49,9 +65,11 @@ for event in longpoll.listen():
         if egor_mes != text:
             if event.from_chat:
                 send_message(egor_mes)
-        if 'Ку' == text or 'Привет' == text or 'Хай' == text or 'Hello' == text or 'Hi' == text:
+        elif 'Ку' == text or 'Привет' == text or 'Хай' == text or 'Hello' == text or 'Hi' == text:
             if event.from_chat:
                 send_message("Привет!")
+        elif thanks_oleg(text):
+            send_message('Спасибо, Олег!')
             
 
 
