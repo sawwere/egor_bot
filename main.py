@@ -1,11 +1,10 @@
-from requests import *
-import random, vk_api, vk
+import vk_api
 import re
 from time import sleep
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.longpoll import VkLongPoll, VkEventType
+
 
 def load_info(path):
     with open(path) as file:
@@ -14,6 +13,7 @@ def load_info(path):
         group_id = lines[1]
         key = lines
     return token, group_id, key
+
 
 token, group_id, key = load_info("config.txt")
 
@@ -29,9 +29,8 @@ class MyVkBotLongPoll(VkBotLongPoll):
                 sleep(10)
 
 
-
-vk_session = vk_api.VkApi(
-    token=token)
+vk_session = vk_api.VkApi(token=token)
+give = vk_session.get_api()
 
 longpoll = MyVkBotLongPoll(vk_session, group_id)
 vk = vk_session.get_api()
@@ -45,6 +44,7 @@ def send_message(text):
         random_id=get_random_id(),
         message=text,
         chat_id=event.chat_id)
+    #bh.method('messages.send', {'user_id' : id, 'message' : text, 'random_id': 0})
 
 
 def thanks_oleg(text):
@@ -70,30 +70,3 @@ for event in longpoll.listen():
                 send_message("Привет!")
         elif thanks_oleg(text):
             send_message('Спасибо, Олег!')
-            
-
-
-             
-'''
-for event in Lslongpoll.listen():
-    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-        vars1 = ['������', '��', '���', '������']
-        if event.text in vars1:
-            if event.from_user:
-                Lsvk.messages.send(
-                    user_id = event.user_id,
-                    message = '������)',
-                    random_id = get_random_id()
-                    )
-        vars2 = ['����������', '����������']
-        if event.text in vars2:
-            if event.from_user:
-                Lsvk.messages.send(
-                    user_id = event.user_id,
-                    random_id = get_random_id(),
-                    keyboard = keyboard.get_keyboard(),
-                    message = '�����'
-                    )
-'''
-
-
